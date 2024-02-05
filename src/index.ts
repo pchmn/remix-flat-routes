@@ -8,7 +8,7 @@ import * as path from 'path'
 
 type RouteInfo = {
   id: string
-  path: string
+  path?: string
   file: string
   name: string
   segments: string[]
@@ -240,7 +240,7 @@ export function getRouteInfo(
   let routePath = createRoutePath(routeSegments, index, options)
   let routeInfo = {
     id: routeId,
-    path: routePath!,
+    path: routePath,
     file: filePath,
     name: routeSegments.join('/'),
     segments: routeSegments,
@@ -305,7 +305,10 @@ function findParentRouteId(
   let parentName = routeInfo.segments.slice(0, -1).join('/')
   while (parentName) {
     if (nameMap.has(parentName)) {
-      return nameMap.get(parentName)!.id
+      const parentRoute = nameMap.get(parentName)!
+      if (parentRoute.path !== undefined) {
+        return parentRoute.id
+      }
     }
     parentName = parentName.substring(0, parentName.lastIndexOf('/'))
   }
